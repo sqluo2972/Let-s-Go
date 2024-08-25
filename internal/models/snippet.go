@@ -3,21 +3,22 @@ package models
 import (
 	"database/sql"
 	"errors"
+	"time"
 )
 
 type Snippet struct {
 	ID      int
 	Title   string
 	Content string
-	Created string
-	Expires string
+	Created time.Time
+	Expires time.Time
 }
 
 type SnippetModel struct {
 	DB *sql.DB
 }
 
-func (m *SnippetModel) Insert(title, content, expires string) (int, error) {
+func (m *SnippetModel) Insert(title, content string, expires int) (int, error) {
 
 	stmt := `INSERT INTO snippets (title, content, created, expires)
 	VALUES(?, ?, UTC_TIMESTAMP(), DATE_ADD(UTC_TIMESTAMP(), INTERVAL ? DAY))`

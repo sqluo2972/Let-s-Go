@@ -20,8 +20,10 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.render(w, http.StatusOK, "home.tmpl.html", &templateData{
-		Snippets: snippets})
+	data := app.newTemplateData(r)
+	data.Snippets = snippets
+
+	app.render(w, http.StatusOK, "home.tmpl.html", data)
 
 }
 func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
@@ -52,7 +54,7 @@ func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
 	}
 	title := "0 snail"
 	content := "0 snail\nClimb Mount Fuji,\nBut slowly, slowly!"
-	expires := "7"
+	expires := 7
 
 	id, err := app.snippets.Insert(title, content, expires)
 	if err != nil {
