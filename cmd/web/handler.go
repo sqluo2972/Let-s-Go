@@ -52,7 +52,13 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.render(w, http.StatusOK, "view.tmpl.html", &templateData{Snippet: snippet})
+	flash := app.sessionManager.PopString(r.Context(), "flash")
+
+	data := app.newTemplateData(r)
+	data.Snippet = snippet
+	data.Flash = flash
+
+	app.render(w, http.StatusOK, "view.tmpl.html", data)
 
 }
 func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
@@ -74,6 +80,8 @@ func (app *application) snippetCreatePost(w http.ResponseWriter, r *http.Request
 		return
 	}
 
+	app.sessionManager.Put(r.Context(), "flash", "Snippet successfully created!")
+
 	form.CheckField(validator.NotBlank(form.Title), "title", "This field cannot be blank")
 	form.CheckField(validator.MaxChars(form.Title, 100), "title", "This field cannot be longer than 100 characters")
 	form.CheckField(validator.NotBlank(form.Content), "content", "This field cannot be blank")
@@ -91,6 +99,8 @@ func (app *application) snippetCreatePost(w http.ResponseWriter, r *http.Request
 		app.serverError(w, err)
 		return
 	}
+
+	app.sessionManager.Put(r.Context(), "flash", "Snippet successfully created!")
 
 	http.Redirect(w, r, fmt.Sprintf("/snippet/view/%d", id), http.StatusSeeOther)
 }
