@@ -3,14 +3,20 @@
 <nav class="main-nav">
   <div class="nav-left">
     <a href="/" class="nav-link">Home</a>
+    {{if .IsAuthenticated}}
     <a href="/snippet/create" class="nav-link">Create snippet</a>
+    {{end}}
   </div>
   <div class="nav-right">
-    <a href="/user/signup" class="nav-link">Signup</a>
-    <a href="/user/login" class="nav-link">Login</a>
-    <form action="/user/logout" method="POST" class="logout-form">
-      <button type="submit" class="logout-button">Logout</button>
-    </form>
+    {{if .IsAuthenticated}}
+      <form action="/user/logout" method="POST" class="logout-form">
+        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}" />
+        <button type="submit" class="logout-button">Logout</button>
+      </form>
+    {{else}}
+      <a href="/user/signup" class="nav-link">Signup</a>
+      <a href="/user/login" class="nav-link">Login</a>
+    {{end}}
   </div>
 </nav>
 
